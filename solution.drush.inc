@@ -34,9 +34,9 @@ function solution_drush_command() {
 function drush_solution_install() {
   drush_print(dt('------------------------------- Start update process'));
 
-  if (!module_exists('drush_migrate')) {
+  if (!module_exists('drush_drake')) {
     drush_print(dt('------------------------------- Enable drake module - START'));
-    drush_invoke_process('@self', 'pm-enable', array('drush_migrate'), array('#integrate' => TRUE), TRUE);
+    drush_invoke_process('@self', 'pm-enable', array('drush_drake'), array('#integrate' => TRUE), TRUE);
     drush_print(dt('------------------------------- Enable drake module - FINISH'));
     drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE), TRUE);
   }
