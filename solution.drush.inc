@@ -48,7 +48,6 @@ function drush_solution_install() {
 
   drush_print(dt('------------------------------- Clear cache'));
   drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE), TRUE);
-  drush_invoke_process('@self', 'cache-clear', array('drush'), array('#integrate' => TRUE), TRUE);
 
   drush_print(dt('------------------------------- Run module updates - START'));
   drush_invoke_process('@self', 'updatedb', array('--yes'), array('#integrate' => TRUE), TRUE);
