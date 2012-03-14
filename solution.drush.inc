@@ -36,26 +36,26 @@ function drush_solution_install() {
 
   if (!module_exists('drush_drake')) {
     drush_print(dt('------------------------------- Enable drake module - START'));
-    drush_invoke_process('@self', 'pm-enable', array('drush_drake'), array('#integrate' => TRUE), TRUE);
+    drush_invoke_process('@self', 'pm-enable', array('drush_drake'), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Enable drake module - FINISH'));
-    drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE), TRUE);
+    drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
   }
 
   drush_print(dt('------------------------------- Run drake migrate script - START'));
-  drush_invoke_process('@self', 'drake-migrate', array('all'), array('#integrate' => TRUE), TRUE);
+  drush_invoke_process('@self', 'drake-migrate', array('all'), array('#integrate' => TRUE));
   module_list(TRUE, FALSE);
   drush_print(dt('------------------------------- Run drake migrate script - FINISH'));
 
   drush_print(dt('------------------------------- Clear cache'));
-  drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE), TRUE);
+  drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
 
   drush_print(dt('------------------------------- Run module updates - START'));
-  drush_invoke_process('@self', 'updatedb', array('--yes'), array('#integrate' => TRUE), TRUE);
+  drush_invoke_process('@self', 'updatedb', array('--yes'), array('#integrate' => TRUE));
   drush_print(dt('------------------------------- Run module updates - FINISH'));
 
   drush_print(dt('------------------------------- Run nodeaccess rebuild - START'));
-  drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE), TRUE);
-  drush_invoke_process('@self', 'solution-nodeaccess-rebuild', array('--yes'), array('#integrate' => TRUE), TRUE);
+  drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
+  drush_invoke_process('@self', 'solution-nodeaccess-rebuild', array('--yes'), array('#integrate' => TRUE));
   drush_print(dt('------------------------------- Run nodeaccess rebuild - FINISH'));
 
   if (module_exists('l10n_update')) {
