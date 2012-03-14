@@ -42,7 +42,7 @@ function drush_solution_install() {
   }
 
   drush_print(dt('------------------------------- Run drake migrate script - START'));
-  drush_invoke_process('@self', 'drake', array('--yes'), array('#integrate' => TRUE), TRUE);
+  drush_invoke_process('@self', 'drake-migrate', array('all --yes'), array('#integrate' => TRUE), TRUE);
   module_list(TRUE, FALSE);
   drush_print(dt('------------------------------- Run drake migrate script - FINISH'));
 
