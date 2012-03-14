@@ -54,6 +54,7 @@ function drush_solution_install() {
   drush_print(dt('------------------------------- Run module updates - FINISH'));
 
   drush_print(dt('------------------------------- Run nodeaccess rebuild - START'));
+  drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE), TRUE);
   drush_invoke_process('@self', 'solution-nodeaccess-rebuild', array('--yes'), array('#integrate' => TRUE), TRUE);
   drush_print(dt('------------------------------- Run nodeaccess rebuild - FINISH'));
 
