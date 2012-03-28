@@ -28,6 +28,11 @@ function solution_drush_command() {
     ),
   );
 
+  $items['drupal-admin-role-rebuild'] = array(
+    'description' => "Set all avaliable permissions for administrator role",
+  );
+
+
   return $items;
 }
 
@@ -133,6 +138,9 @@ function drush_solution_install() {
     drush_print(dt('------------------------------- Clear cache'));
     drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
   }
+  drush_print(dt('------------------------------- Rebuild perms for admin - START'));
+  drush_invoke_process('@self', 'drupal-admin-role-rebuild', array(), array('#integrate' => TRUE));
+  drush_print(dt('------------------------------- Rebuild perms for admin - FINISH'));
 }
 
 
@@ -152,6 +160,14 @@ function drush_solution_imagecache_presets_revert_all() {
   drush_log(dt('Preset reverted.'), 'ok');
 }
 
+
+function drush_solution_drupal_admin_role_rebuild() {
+  $admin_role = variable_get('user_admin_role', NULL);
+  if (!is_null($admin_role)) {
+    $perms = array_keys(module_invoke_all('permission'));
+    user_role_grant_permissions($admin_role, $perms);
+  }
+}
 
 
 
