@@ -83,10 +83,10 @@ function drush_solution_install() {
   }
 
 //@TODO: add hook for custom calles
-  
+
   if (module_exists('views')) {
     drush_print(dt('------------------------------- Revert views - START'));
-    drush_invoke_process('@self', 'views-revert', array('all'), array('#integrate' => TRUE));
+    drush_invoke_process('@self', 'views-revert', array('--choice=all --strict=0'), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert views - FINISH'));
   }
 
