@@ -92,19 +92,19 @@ function drush_solution_install() {
 
   if (module_exists('panels')) {
     drush_print(dt('------------------------------- Revert panels pages - START'));
-    drush_invoke_process('@self', 'panels-pages-delete-all', array(), array('#integrate' => TRUE));
+    //drush_invoke_process('@self', 'panels-pages-delete-all', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert panels pages - FINISH'));
 
     drush_print(dt('------------------------------- Revert panels variants - START'));
-    drush_invoke_process('@self', 'panels-variants-revert-all', array(), array('#integrate' => TRUE));
+    //drush_invoke_process('@self', 'panels-variants-revert-all', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert panels variants - FINISH'));
 
     drush_print(dt('------------------------------- Revert panels custom content - START'));
-    drush_invoke_process('@self', 'panels-custom_content-revert-all', array(), array('#integrate' => TRUE));
+    //drush_invoke_process('@self', 'panels-custom_content-revert-all', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert panels custom content - FINISH'));
 
     drush_print(dt('------------------------------- Revert panels layouts - START'));
-    drush_invoke_process('@self', 'panels-layouts-revert-all', array(), array('#integrate' => TRUE));
+    //drush_invoke_process('@self', 'panels-layouts-revert-all', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert panels layouts - FINISH'));
   }
 
