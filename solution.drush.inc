@@ -15,6 +15,20 @@ function solution_drush_command() {
   $items['solution_install'] = array(
     'description' => "Install solution",
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
+    'options' => array(
+      'skip-drake' => "Skip drake migrations.",
+      'skip-features-revert' => "Skip features revert.",
+      'skip-strongarm-revert' => "Skip strongarm revert.",
+      'skip-imagecache-revert' => "Skip imagecache revert.",
+      'skip-update-db' => "Skip db updates revert.",
+      'skip-views-revert' => "Skip views revert.",
+      'skip-panels-revert' => "Skip panels revert.",
+      'skip-nodeaccess-rebuild' => "Skip node access rebuild.",
+      'skip-translations-update' => "Skip translations update.",
+      'skip-webform-revert' => "Skip webform revert.",
+      'skip-ubercart-revert' => "Skip ubercart revert.",
+      'skip-admin-role-revert' => "Skip admin role revert.",
+    ),
   );
 
   $items['solution-nodeaccess-rebuild'] = array(
@@ -46,37 +60,49 @@ function drush_solution_install() {
     drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
   }
 
-  drush_print(dt('------------------------------- Run drake migrate script - START'));
-  drush_invoke_process('@self', 'drake-migrate', array('all'), array('#integrate' => TRUE));
-  module_list(TRUE, FALSE);
-  drush_print(dt('------------------------------- Run drake migrate script - FINISH'));
+  $skip_drake = drush_get_option('skip-drake');
+  if (!$skip_drake) {
+    drush_print(dt('------------------------------- Run drake migrate script - START'));
+    drush_invoke_process('@self', 'drake-migrate', array('all'), array('#integrate' => TRUE));
+    module_list(TRUE, FALSE);
+    drush_print(dt('------------------------------- Run drake migrate script - FINISH'));
 
-  drush_print(dt('------------------------------- Clear cache'));
-  drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
+    drush_print(dt('------------------------------- Clear cache'));
+    drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
+  }
 
-  drush_print(dt('------------------------------- Run module updates - START'));
-  drush_invoke_process('@self', 'updatedb', array('--yes'), array('#integrate' => TRUE));
-  drush_print(dt('------------------------------- Run module updates - FINISH'));
+  $skip_update_db = drush_get_option('skip-update-db');
+  if (!$skip_update_db) {
+    drush_print(dt('------------------------------- Run module updates - START'));
+    drush_invoke_process('@self', 'updatedb', array('--yes'), array('#integrate' => TRUE));
+    drush_print(dt('------------------------------- Run module updates - FINISH'));
+  }
 
-  drush_print(dt('------------------------------- Run nodeaccess rebuild - START'));
-  drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
-  drush_invoke_process('@self', 'solution-nodeaccess-rebuild', array('--yes'), array('#integrate' => TRUE));
-  drush_print(dt('------------------------------- Run nodeaccess rebuild - FINISH'));
+  $skip_nodeaccess_rebuild = drush_get_option('skip-nodeaccess-rebuild');
+  if (!$skip_nodeaccess_rebuild) {
+    drush_print(dt('------------------------------- Run nodeaccess rebuild - START'));
+    drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
+    drush_invoke_process('@self', 'solution-nodeaccess-rebuild', array('--yes'), array('#integrate' => TRUE));
+    drush_print(dt('------------------------------- Run nodeaccess rebuild - FINISH'));
+  }
 
-  if (module_exists('l10n_update')) {
+  $skip_trunslations_update = drush_get_option('skip-translations-update');
+  if (!$skip_trunslations_update && module_exists('l10n_update')) {
     drush_print(dt('------------------------------- Revert translations - START'));
     drush_invoke_process('@self', 'l10n-update-refresh', array(), array('#integrate' => TRUE));
     drush_invoke_process('@self', 'l10n-update', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert translations - FINISH'));
   }
 
-  if (module_exists('features')) {
+  $skip_features_revert = drush_get_option('skip-features-revert');
+  if (!$skip_features_revert && module_exists('features')) {
     drush_print(dt('------------------------------- Revert features - START'));
     drush_invoke_process('@self', 'features-revert-all', array('--yes'), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert features - FINISH'));
   }
 
-  if (module_exists('strongarm')) {
+  $skip_strongarm_revert = drush_get_option('skip-strongarm-revert');
+  if (!$skip_strongarm_revert && module_exists('strongarm')) {
     drush_print(dt('------------------------------- Revert variables - START'));
     drush_invoke_process('@self', 'strongarm-revert', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert variables - FINISH'));
@@ -84,13 +110,15 @@ function drush_solution_install() {
 
 //@TODO: add hook for custom calles
 
-  if (module_exists('views')) {
+  $skip_views_revert = drush_get_option('skip-views-revert');
+  if (!$skip_views_revert && module_exists('views')) {
     drush_print(dt('------------------------------- Revert views - START'));
     drush_invoke_process('@self', 'views-revert', array('--choice=all --strict=0'), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert views - FINISH'));
   }
 
-  if (module_exists('panels')) {
+  $skip_panels_revert = drush_get_option('skip-panels-revert');
+  if (!$skip_panels_revert && module_exists('panels')) {
     drush_print(dt('------------------------------- Revert panels pages - START'));
     drush_invoke_process('@self', 'panels-pages-delete-all', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert panels pages - FINISH'));
@@ -108,19 +136,22 @@ function drush_solution_install() {
     drush_print(dt('------------------------------- Revert panels layouts - FINISH'));
   }
 
-  if (module_exists('imagecache')) {
+  $skip_imagecache_revert = drush_get_option('skip-imagecache-revert');
+  if (!$skip_imagecache_revert && module_exists('imagecache')) {
     drush_print(dt('------------------------------- Revert imagecache presets - START'));
     drush_invoke_process('@self', 'imagecache-presets-revert-all', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert imagecache presets - FINISH'));
   }
 
-  if (module_exists('webforms')) {
+  $skip_webform_revert = drush_get_option('skip-webform-revert');
+  if (!$skip_webform_revert && module_exists('webforms')) {
     drush_print(dt('------------------------------- Revert webforms - START'));
     drush_invoke_process('@self', 'webforms-revert-all', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert webforms - FINISH'));
   }
 
-  if (module_exists('ubercart')) {
+  $skip_ubercart_revert = drush_get_option('skip-ubercart-revert');
+  if (!$skip_ubercart_revert && module_exists('ubercart')) {
     drush_print(dt('------------------------------- Revert conditional actions - START'));
     drush_invoke_process('@self', 'conditional-actions-revert-all', array(), array('#integrate' => TRUE));
     drush_print(dt('------------------------------- Revert conditional actions - FINISH'));
@@ -129,7 +160,7 @@ function drush_solution_install() {
   drush_print(dt('------------------------------- Clear cache'));
   drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
 
-  if (module_exists('features')) {
+  if (!$skip_features_revert && module_exists('features')) {
     // we need this because some features do not revert from first run (event races problem)
     drush_print(dt('------------------------------- Revert features CONTROL - START'));
     drush_invoke_process('@self', 'features-revert-all', array('--yes'), array('#integrate' => TRUE));
@@ -138,11 +169,15 @@ function drush_solution_install() {
     drush_print(dt('------------------------------- Clear cache'));
     drush_invoke_process('@self', 'cc', array('all'), array('#integrate' => TRUE));
   }
-  drush_print(dt('------------------------------- Rebuild perms for admin - START'));
-  drush_invoke_process('@self', 'drupal-admin-role-rebuild', array(), array('#integrate' => TRUE));
-  drush_print(dt('------------------------------- Rebuild perms for admin - FINISH'));
-}
 
+
+  $skip_admin_role_revert = drush_get_option('skip-admin-role-revert');
+  if (!$skip_admin_role_revert) {
+    drush_print(dt('------------------------------- Rebuild perms for admin - START'));
+    drush_invoke_process('@self', 'drupal-admin-role-rebuild', array(), array('#integrate' => TRUE));
+    drush_print(dt('------------------------------- Rebuild perms for admin - FINISH'));
+  }
+}
 
 function drush_solution_nodeaccess_rebuild() {
   module_load_include('inc', 'node', 'node.admin');
